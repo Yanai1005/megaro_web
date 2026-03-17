@@ -205,27 +205,9 @@
 <div class="max-w-xl mx-auto px-4 py-8 flex flex-col gap-6">
 
 	<header class="text-center">
-		<p class="mono text-green-600 text-xs tracking-widest mb-1">[ ESOTERIC WORD GAME v1.0 ]</p>
 		<h1 class="mono text-3xl font-bold crt-glow" style="color:#4ade80;">
 			Brainfuck しりとり
 		</h1>
-
-		<!-- MoonBit ロードステータス -->
-		<div class="mt-2 flex items-center justify-center gap-2">
-			{#if moonbitStatus === 'loading'}
-				<span class="badge" style="background:#1a2a0a; color:#4d7a4d; border:1px solid #2d4a1d;">
-					⏳ MOONBIT LOADING…
-				</span>
-			{:else if moonbitStatus === 'ready'}
-				<span class="badge" style="background:#052e16; color:#4ade80; border:1px solid #166534;">
-					✓ MOONBIT WASM ACTIVE
-				</span>
-			{:else}
-				<span class="badge" style="background:#1a0000; color:#f87171; border:1px solid #7f1d1d;">
-					✗ WASM LOAD ERROR
-				</span>
-			{/if}
-		</div>
 	</header>
 
 	{#if gameOver}
@@ -322,10 +304,6 @@
 	</div>
 
 	{/if}
-
-	<footer class="text-center mono text-green-950 text-xs">
-		bf_moon (MoonBit submodule) · auto-fallback to TS · しりとりルール適用
-	</footer>
 
 </div>
 </div>
