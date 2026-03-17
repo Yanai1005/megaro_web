@@ -50,6 +50,7 @@
 		"wrangler": "^4.63.0"
 	},
 	"dependencies": {
+		"@microsoft/signalr": "^8.0.7",
 		"kuromoji": "^0.1.2"
 	}
 }
