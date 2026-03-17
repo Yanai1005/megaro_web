@@ -97,6 +97,7 @@ resource "azurerm_linux_function_app" "fa" {
         "https://${azurerm_static_web_app.swa.default_host_name}",
         "http://localhost:5173"
       ]
+      support_credentials = true
     }
   }
 
