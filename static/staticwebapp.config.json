@@ -14,6 +14,16 @@
     "X-XSS-Protection": "1; mode=block"
   },
   "mimeTypes": {
-    ".json": "text/json"
-  }
+    ".json": "text/json",
+    ".gz": "application/octet-stream"
+  },
+  "routes": [
+    {
+      "route": "/dict/*",
+      "headers": {
+        "Content-Type": "application/octet-stream",
+        "Content-Encoding": "identity"
+      }
+    }
+  ]
 }
