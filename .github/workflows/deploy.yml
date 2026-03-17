@@ -56,14 +56,23 @@ jobs:
           node-version: 20
 
       - name: Install functions dependencies
-        run: npm install
+        run: npm install --omit=dev
         working-directory: functions
+
+      - name: Create deployment zip
+        run: |
+          cd functions
+          zip -r ../functions_deploy.zip . \
+            --exclude "*.git*" \
+            --exclude "*.md"
+          echo "--- zip contents (node_modules check) ---"
+          unzip -l ../functions_deploy.zip | grep "@azure" | head -5
 
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
           app-name: megaro-api
-          package: functions
+          package: functions_deploy.zip
           publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}
           scm-do-build-during-deployment: false
 
