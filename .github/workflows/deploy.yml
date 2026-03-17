@@ -30,6 +30,7 @@ jobs:
       - run: pnpm build
         env:
           YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
       - name: Deploy to Azure SWA
         uses: Azure/static-web-apps-deploy@v1
@@ -41,6 +42,29 @@ jobs:
           api_location: api
           output_location: ""
           skip_app_build: true
+
+  deploy_functions:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    name: Deploy Functions App
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install functions dependencies
+        run: npm install
+        working-directory: functions-app
+
+      - name: Deploy to Azure Functions
+        uses: Azure/functions-action@v1
+        with:
+          app-name: megaro-api
+          package: functions-app
+          publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}
 
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
