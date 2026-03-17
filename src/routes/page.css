@@ -1,0 +1,59 @@
+:global(body) { background: #050a05; margin: 0; }
+
+.mono { font-family: 'Share Tech Mono', monospace; }
+.jp   { font-family: 'Zen Kaku Gothic New', sans-serif; }
+
+.scanline::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	background: repeating-linear-gradient(
+		0deg, transparent, transparent 2px,
+		rgba(0,0,0,.07) 2px, rgba(0,0,0,.07) 4px
+	);
+	pointer-events: none;
+	z-index: 100;
+}
+
+.crt-glow { text-shadow: 0 0 8px currentColor, 0 0 20px currentColor; }
+
+.bf-block {
+	overflow-wrap: break-word; word-break: break-all;
+	font-family: 'Share Tech Mono', monospace;
+	font-size: .8rem; line-height: 1.7;
+	color: #86efac; letter-spacing: .05em;
+	white-space: pre-wrap;
+}
+
+.input-field {
+	background: transparent; border: none;
+	border-bottom: 2px solid #16a34a; border-radius: 0; outline: none;
+	font-family: 'Zen Kaku Gothic New', sans-serif;
+	font-size: 1.4rem; font-weight: 700; color: #f0fdf4;
+	width: 100%; padding: .5rem .25rem; transition: border-color .2s;
+}
+.input-field::placeholder { color: #166534; font-weight: 400; }
+.input-field:focus { border-color: #4ade80; }
+
+.btn {
+	font-family: 'Share Tech Mono', monospace; letter-spacing: .1em;
+	cursor: pointer; transition: background .15s, transform .1s;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.history-chain { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; }
+
+/* プレイヤーカラー（CSS カスタムプロパティ --pc で注入） */
+.pc-color  { color: var(--pc); }
+.pc-btn {
+	background: color-mix(in srgb, var(--pc) 13%, transparent);
+	border-color: color-mix(in srgb, var(--pc) 40%, transparent);
+	color: var(--pc);
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+.cursor::after { content: '▌'; animation: blink 1s step-end infinite; color: #4ade80; margin-left: 2px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn .3s ease forwards; }
