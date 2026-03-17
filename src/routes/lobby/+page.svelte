@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 
-	const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+	const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
 	let tab = $state<'create' | 'join'>('create');
 	let playerName = $state('');

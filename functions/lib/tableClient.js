@@ -2,10 +2,10 @@
 
 const { TableClient } = require('@azure/data-tables');
 
-const connStr = process.env.AzureWebJobsStorage;
-
 /** @param {string} tableName */
 function getTableClient(tableName) {
+  const connStr = process.env.AzureWebJobsStorage;
+  if (!connStr) throw new Error('AzureWebJobsStorage is not set');
   return TableClient.fromConnectionString(connStr, tableName);
 }
 

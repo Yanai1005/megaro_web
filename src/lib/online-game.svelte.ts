@@ -1,7 +1,7 @@
 import * as signalR from '@microsoft/signalr';
 import type { Player, Turn } from '$lib/types.js';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
 // ── 型定義 ────────────────────────────────────────────────────────────────
 

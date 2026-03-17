@@ -4,7 +4,7 @@
 	import { OnlineGameState } from '$lib/online-game.svelte.js';
 	import { PLAYER_COLORS } from '$lib/types.js';
 
-	const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+	const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 	const roomCode = $derived(($page.params.code ?? '').toUpperCase());
 
 	const game = new OnlineGameState();
