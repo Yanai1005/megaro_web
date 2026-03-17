@@ -55,3 +55,12 @@ export function getHiraganaReading(text: string): string {
 	const reading = tokens.map((t) => t.reading ?? t.surface_form).join('');
 	return toHiragana(reading);
 }
+
+export function isKnownWord(word: string): boolean {
+	if (!tokenizer) return true;
+	if (word.match(/[(（][ぁ-ん]+[)）]$/)) return true;
+	const body = word.match(/^([^(（]+)/)?.[1]?.trimEnd() ?? word;
+	const tokens = tokenizer.tokenize(body);
+	if (tokens.length === 0) return false;
+	return tokens.every((t) => t.reading !== undefined && t.reading !== '');
+}
