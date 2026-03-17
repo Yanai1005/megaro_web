@@ -70,13 +70,13 @@ resource "azurerm_signalr_service" "srs" {
   }
 }
 
-# App Service Plan (Consumption = Y1 = 実質無料)
+# App Service Plan (Consumption = B1 = 実質無料)
 resource "azurerm_service_plan" "asp" {
   name                = "megaro-asp"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Linux"
-  sku_name            = "Y1"
+  sku_name            = "B1"
 }
 
 # Linux Function App
