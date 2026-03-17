@@ -1,0 +1,4 @@
+resource_group_name = "megaro-web-rg"
+location            = "eastasia"
+app_name            = "megaro-web"   # グローバル一意の名前に変更してください
+environment         = "production"
