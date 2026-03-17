@@ -1,66 +1,44 @@
-import { browser } from '$app/environment';
-import kuromoji from 'kuromoji';
-
-type Tokenizer = kuromoji.Tokenizer<kuromoji.IpadicFeatures>;
-
-let tokenizer: Tokenizer | null = null;
-let initPromise: Promise<void> | null = null;
-
-export function initKuromoji(): Promise<void> {
-	if (!browser) return Promise.resolve();
-	if (tokenizer) return Promise.resolve();
-	if (initPromise) return initPromise;
-
-	initPromise = new Promise<void>((resolve, reject) => {
-		kuromoji.builder({ dicPath: '/dict' }).build((err, t) => {
-			if (err) {
-				console.warn('[kana] kuromoji init failed, using katakana-only fallback:', err);
-				initPromise = null; // allow retry on next call
-				reject(err);
-			} else {
-				tokenizer = t;
-				resolve();
-			}
-		});
-	});
-	return initPromise;
-}
-
-export const isKuromojiReady = () => tokenizer !== null;
-
-/** カタカナ → ひらがな */
 export function toHiragana(text: string): string {
 	return text.replace(/[\u30A1-\u30F6]/g, (c) =>
 		String.fromCharCode(c.charCodeAt(0) - 0x60)
 	);
 }
-export function isValidSiritoriWord(word: string): boolean {
-	if (!tokenizer) return true;
-	const body = word.match(/^([^(（]+)/)?.[1]?.trimEnd() ?? word;
-	const tokens = tokenizer.tokenize(body);
-	if (tokens.length === 0) return false;
-	for (const token of tokens) {
-		if (token.pos === '助詞' || token.pos === '助動詞') return false;
-		if (token.pos === '記号') return false;
-	}
-	return true;
+
+export async function analyzeText(text: string): Promise<string[][]> {
+	const res = await fetch('/api/analyze', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ q: text }),
+	});
+	if (!res.ok) throw new Error(`Analyze API error: ${res.status}`);
+	return res.json();
 }
 
-
-
-export function getHiraganaReading(text: string): string {
-	if (!tokenizer) return toHiragana(text);
-
-	const tokens = tokenizer.tokenize(text);
-	const reading = tokens.map((t) => t.reading ?? t.surface_form).join('');
-	return toHiragana(reading);
+/** トークン配列からひらがな読みを取得する */
+export function getReadingFromTokens(tokens: string[][]): string {
+	return toHiragana(tokens.map((t) => t[1] ?? t[0]).join(''));
 }
 
-export function isKnownWord(word: string): boolean {
-	if (!tokenizer) return true;
-	if (word.match(/[(（][ぁ-ん]+[)）]$/)) return true;
-	const body = word.match(/^([^(（]+)/)?.[1]?.trimEnd() ?? word;
-	const tokens = tokenizer.tokenize(body);
+const INVALID_POS = new Set(['助詞', '助動詞', '記号', '接続詞', '連体詞', '形容詞', '形容動詞', '副詞', '感動詞', 'フィラー', 'その他']);
+
+/** しりとりに使える単語か（文章でないか）チェック */
+export function isValidSiritoriWordFromTokens(tokens: string[][]): boolean {
 	if (tokens.length === 0) return false;
-	return tokens.every((t) => t.reading !== undefined && t.reading !== '');
+	return !tokens.some((t) =>
+		(t.length > 3 && INVALID_POS.has(t[3])) ||
+		(t.length > 4 && t[4] === '接尾')
+	);
+}
+
+export function isKnownWordFromTokens(tokens: string[][]): boolean {
+	if (tokens.length !== 1) return false;
+	return tokens[0][1] != null && tokens[0][1] !== '';
+}
+
+/** 日本語（ひらがな・カタカナ・漢字）を含む単語か確認する */
+const JAPANESE_RE = /[\u3041-\u309E\u30A1-\u30F4\u4E00-\u9FBF]/;
+
+export function isJapaneseFromTokens(tokens: string[][]): boolean {
+	if (tokens.length === 0) return false;
+	return tokens.some((t) => JAPANESE_RE.test(t[0]));
 }
