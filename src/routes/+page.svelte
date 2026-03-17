@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { compile, execute, initMoonBit, getStatus } from '$lib/bf.js';
-	import { initKuromoji, getHiraganaReading, isKuromojiReady } from '$lib/kana.js';
+	import { initKuromoji, getHiraganaReading, isKuromojiReady, isValidSiritoriWord, isKnownWord } from '$lib/kana.js';
 
 	let moonbitStatus = $state<'loading' | 'ready' | 'error'>('loading');
 	let kuromojiStatus = $state<'loading' | 'ready' | 'fallback'>('loading');
@@ -69,10 +69,20 @@
 
 	function handleSubmit() {
 		const word = inputWord.trim();
+		inputWord = '';
 		error = '';
 		if (!word) { error = '単語を入力してください'; return; }
 
 		const reading = resolveReading(word);
+
+		if (kuromojiReady && !isValidSiritoriWord(wordBody(word))) {
+			error = '文章は使えません。単語を入力してください';
+			return;
+		}
+		if (kuromojiReady && !isKnownWord(word)) {
+			error = '辞書に見つかりません。実在する単語か「単語(よみ)」の形で入力してください';
+			return;
+		}
 
 		if (expectedChar && firstChar(reading) !== expectedChar) {
 			error = `Brainfuck を解読すると… 「${expectedChar}」から始まる単語を入力してください`;
@@ -100,10 +110,9 @@
 		const nextPlayer: Player = currentPlayer === 1 ? 2 : 1;
 		challengeBf = compile(last);
 		expectedChar = last;
-		currentPlayer = nextPlayer;
-		inputWord = '';
 		hintVisible = false;
 		hintResult = '';
+		currentPlayer = nextPlayer;
 	}
 
 	const kuromojiReady = $derived(kuromojiStatus === 'ready');
@@ -259,8 +268,7 @@
 	{#if challengeBf}
 	<div class="fade-in border border-green-900 rounded-sm" style="background:#020d02;">
 		<div class="border-b border-green-950 px-4 py-2 flex items-center justify-between">
-			<span class="mono text-green-600 text-xs tracking-widest">[ DECODE THIS ]</span>
-			<span class="jp text-green-800 text-xs">Player {currentPlayer} — 最初の文字を解読</span>
+			<span class="jp text-green-800 text-xs">Player {currentPlayer} </span>
 		</div>
 		<div class="p-4">
 			<div class="bf-block">{challengeBf}</div>
@@ -282,12 +290,14 @@
 		</label>
 
 		<div class="flex gap-3 items-end">
+			{#key currentPlayer}
 			<input class="input-field jp flex-1" type="text"
 				bind:value={inputWord}
 				onkeydown={(e) => e.key === 'Enter' && handleSubmit()}
 				placeholder={challengeBf ? 'コードを解読して…' : '単語を入力…'}
 				autocomplete="off" autocorrect="off" spellcheck={false}
 			/>
+			{/key}
 			<button onclick={handleSubmit}
 				class="btn text-sm px-5 py-2 rounded-sm border font-bold"
 				style="background:{PC[currentPlayer]}22; border-color:{PC[currentPlayer]}66; color:{PC[currentPlayer]};">
