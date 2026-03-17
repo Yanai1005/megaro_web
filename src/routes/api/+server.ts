@@ -1,6 +1,6 @@
 import { YAHOO_APP_ID } from '$env/static/private';
 import { json, error } from '@sveltejs/kit';
-import type { RequestHandler } from './analyze/$types';
+import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { q } = await request.json();

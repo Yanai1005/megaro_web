@@ -5,7 +5,7 @@ export function toHiragana(text: string): string {
 }
 
 export async function analyzeText(text: string): Promise<string[][]> {
-	const res = await fetch('/api/analyze', {
+	const res = await fetch('/api', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ q: text }),
