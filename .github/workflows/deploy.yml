@@ -64,17 +64,22 @@ jobs:
           cd functions
           zip -r ../functions_deploy.zip . \
             --exclude "*.git*" \
-            --exclude "*.md"
-          echo "--- zip contents (node_modules check) ---"
+            --exclude "*.md" \
+            --exclude "oryx-manifest.toml"
+          echo "--- zip contents check ---"
           unzip -l ../functions_deploy.zip | grep "@azure" | head -5
 
       - name: Deploy to Azure Functions
-        uses: Azure/functions-action@v1
-        with:
-          app-name: megaro-api
-          package: functions_deploy.zip
-          publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}
-          scm-do-build-during-deployment: false
+        run: |
+          az login --service-principal \
+            -u ${{ secrets.AZURE_CLIENT_ID }} \
+            -p ${{ secrets.AZURE_CLIENT_SECRET }} \
+            --tenant ${{ secrets.AZURE_TENANT_ID }}
+          az functionapp deploy \
+            --name megaro-api \
+            --resource-group megaro-web-rg \
+            --src-path functions_deploy.zip \
+            --type zip
 
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

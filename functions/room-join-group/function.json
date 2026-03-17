@@ -5,7 +5,9 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["post"],
+      "methods": [
+        "post"
+      ],
       "route": "room/join-group"
     },
     {
@@ -20,5 +22,6 @@
       "hubName": "gameHub",
       "connectionStringSetting": "AzureSignalRConnectionString"
     }
-  ]
+  ],
+  "scriptFile": "index.js"
 }
