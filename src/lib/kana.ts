@@ -34,6 +34,19 @@ export function toHiragana(text: string): string {
 		String.fromCharCode(c.charCodeAt(0) - 0x60)
 	);
 }
+export function isValidSiritoriWord(word: string): boolean {
+	if (!tokenizer) return true;
+	const body = word.match(/^([^(（]+)/)?.[1]?.trimEnd() ?? word;
+	const tokens = tokenizer.tokenize(body);
+	if (tokens.length === 0) return false;
+	for (const token of tokens) {
+		if (token.pos === '助詞' || token.pos === '助動詞') return false;
+		if (token.pos === '記号') return false;
+	}
+	return true;
+}
+
+
 
 export function getHiraganaReading(text: string): string {
 	if (!tokenizer) return toHiragana(text);
