@@ -1,0 +1,19 @@
+{
+  "navigationFallback": {
+    "rewrite": "/404.html",
+    "exclude": ["/_app/*", "/favicon.*", "/*.{png,jpg,svg,ico,css,js}"]
+  },
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/404.html"
+    }
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-XSS-Protection": "1; mode=block"
+  },
+  "mimeTypes": {
+    ".json": "text/json"
+  }
+}
