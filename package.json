@@ -18,7 +18,7 @@
 		"moonbit:build": "cd moonbit && moon build --target wasm --release",
 		"moonbit": "bash scripts/build-moonbit.sh",
 		"copy:dict": "node -e \"import('fs').then(fs=>fs.cpSync('node_modules/kuromoji/dict','static/dict',{recursive:true}))\"",
-		"prebuild": "pnpm moonbit && pnpm copy:dict"
+		"prebuild": "pnpm copy:dict"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.2",
