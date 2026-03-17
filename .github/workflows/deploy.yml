@@ -65,6 +65,7 @@ jobs:
           app-name: megaro-api
           package: functions
           publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: false
 
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

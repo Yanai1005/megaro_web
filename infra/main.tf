@@ -105,6 +105,6 @@ resource "azurerm_linux_function_app" "fa" {
     AzureWebJobsStorage          = azurerm_storage_account.sa.primary_connection_string
     YAHOO_APP_ID                 = var.yahoo_app_id
     FUNCTIONS_WORKER_RUNTIME     = "node"
-    WEBSITE_RUN_FROM_PACKAGE     = "1"
+    SCM_DO_BUILD_DURING_DEPLOYMENT = "false"
   }
 }
