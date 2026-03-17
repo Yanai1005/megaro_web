@@ -1,11 +1,13 @@
 <script lang="ts">
 	import './page.css';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { initMoonBit, getStatus } from '$lib/bf.js';
 	import { GameState } from '$lib/game.svelte.js';
 	import { PLAYER_COLORS } from '$lib/types.js';
 
 	let moonbitStatus = $state<'loading' | 'ready' | 'error'>('loading');
+	let mode = $state<'select' | 'local'>('select');
 	const game = new GameState();
 
 	onMount(async () => {
@@ -13,6 +15,11 @@
 			.then(() => { moonbitStatus = getStatus(); })
 			.catch((e) => { moonbitStatus = 'error'; console.error('initMoonBit failed:', e); });
 	});
+
+	function startLocal() {
+		game.reset();
+		mode = 'local';
+	}
 </script>
 
 <svelte:head>
@@ -28,7 +35,25 @@
 		</h1>
 	</header>
 
-	{#if game.gameOver}
+	<!-- モード選択 -->
+	{#if mode === 'select'}
+	<div class="flex flex-col gap-3">
+		<button
+			onclick={startLocal}
+			class="btn border border-green-800 rounded-sm px-6 py-4 text-left"
+			style="background:#0a150a; color:#4ade80;">
+			<div class="text-sm font-bold">[ ローカル対戦 ]</div>
+			<div class="jp text-green-700 text-xs mt-1">同じ画面で2人対戦</div>
+		</button>
+		<button
+			onclick={() => goto('/lobby')}
+			class="btn border border-pink-900 rounded-sm px-6 py-4 text-left"
+			style="background:#1a0a12; color:#f472b6;">
+			<div class="text-sm font-bold">[ オンライン対戦 ]</div>
+			<div class="jp text-pink-900 text-xs mt-1">別々の端末でリアルタイム対戦</div>
+		</button>
+	</div>
+	{:else if game.gameOver}
 	<!-- ゲームオーバー画面 -->
 	<div class="fade-in border border-green-900 rounded-sm p-6" style="background:#0a150a;">
 		<p class="mono text-green-600 text-xs mb-4">[ GAME OVER ]</p>
@@ -54,10 +79,16 @@
 				{/each}
 			</div>
 		</div>
-		<button onclick={() => game.reset()}
-			class="btn bg-green-900 hover:bg-green-800 text-green-300 border border-green-700 text-sm px-6 py-2 rounded-sm">
-			[ RESTART ]
-		</button>
+		<div class="flex gap-3">
+			<button onclick={() => game.reset()}
+				class="btn bg-green-900 hover:bg-green-800 text-green-300 border border-green-700 text-sm px-6 py-2 rounded-sm">
+				[ RESTART ]
+			</button>
+			<button onclick={() => { game.reset(); mode = 'select'; }}
+				class="btn text-green-800 border border-green-950 text-sm px-4 py-2 rounded-sm hover:text-green-600">
+				← メニュー
+			</button>
+		</div>
 	</div>
 
 	{:else}
