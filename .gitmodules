@@ -1,0 +1,3 @@
+[submodule "moonbit"]
+	path = moonbit
+	url = git@github.com:Yanai1005/bf_moon.git
