@@ -104,7 +104,7 @@ resource "azurerm_linux_function_app" "fa" {
   app_settings = {
     AzureSignalRConnectionString = azurerm_signalr_service.srs.primary_connection_string
     AzureWebJobsStorage          = azurerm_storage_account.sa.primary_connection_string
-    YAHOO_APP_ID                 = var.yahoo_app_id
+    ANALYZE_API_URL              = var.analyze_api_url
     FUNCTIONS_WORKER_RUNTIME     = "node"
     SCM_DO_BUILD_DURING_DEPLOYMENT = "false"
   }

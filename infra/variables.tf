@@ -21,10 +21,9 @@ variable "environment" {
   description = "環境名 (例: production, staging, development)"
 }
 
-variable "yahoo_app_id" {
+variable "analyze_api_url" {
   type        = string
-  description = "Yahoo! Japan Developer Network の App ID"
-  sensitive   = true
+  description = "形態素解析APIのURL"
 }
 
 variable "storage_account_prefix" {
