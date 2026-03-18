@@ -66,9 +66,6 @@ export class GameState {
 		if (!manual && !isKnownWordFromTokens(tokens)) {
 			this.error = '辞書に見つかりません。実在する単語か「単語(よみ)」の形で入力してください'; return;
 		}
-		if (this.expectedChar && firstChar(reading) !== this.expectedChar) {
-			this.error = `Brainfuck を解読すると… 「${this.expectedChar}」から始まる単語を入力してください`; return;
-		}
 		if (this.usedWords.has(body)) {
 			this.history = [...this.history, { player: this.currentPlayer, word, reading }];
 			this.endGame(this.currentPlayer, `「${body}」はすでに使われた単語です`);
