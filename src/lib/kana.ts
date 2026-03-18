@@ -4,6 +4,22 @@ export function toHiragana(text: string): string {
 	);
 }
 
+export async function warmupApi(): Promise<void> {
+	for (let i = 0; i < 12; i++) {
+		try {
+			const res = await fetch('/api/analyze', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ q: 'あ' }),
+				signal: AbortSignal.timeout(8000),
+			});
+			if (res.ok) return;
+		} catch {}
+		await new Promise<void>((r) => setTimeout(r, 5000));
+	}
+	throw new Error('API warmup failed');
+}
+
 export async function analyzeText(text: string): Promise<string[][]> {
 	const res = await fetch('/api/analyze', {
 		method: 'POST',

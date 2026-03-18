@@ -5,12 +5,17 @@
 	import { initMoonBit, getStatus } from '$lib/bf.js';
 	import { GameState } from '$lib/game.svelte.js';
 	import { PLAYER_COLORS } from '$lib/types.js';
+	import { warmupApi } from '$lib/kana.js';
 
 	let moonbitStatus = $state<'loading' | 'ready' | 'error'>('loading');
+	let apiStatus = $state<'warming' | 'ready' | 'error'>('warming');
 	let mode = $state<'select' | 'local'>('select');
 	const game = new GameState();
 
 	onMount(async () => {
+		warmupApi()
+			.then(() => { apiStatus = 'ready'; })
+			.catch(() => { apiStatus = 'error'; });
 		await initMoonBit()
 			.then(() => { moonbitStatus = getStatus(); })
 			.catch((e) => { moonbitStatus = 'error'; console.error('initMoonBit failed:', e); });
@@ -52,6 +57,11 @@
 			<div class="text-sm font-bold">[ オンライン対戦 ]</div>
 			<div class="jp text-pink-900 text-xs mt-1">別々の端末でリアルタイム対戦</div>
 		</button>
+		{#if apiStatus !== 'ready'}
+		<p class="mono text-xs text-center" style="color:{apiStatus === 'error' ? '#f87171' : '#6b6b00'};">
+			{apiStatus === 'warming' ? '◌ 解析API起動中...' : '✗ 解析APIへの接続に失敗'}
+		</p>
+		{/if}
 	</div>
 	{:else if game.gameOver}
 	<!-- ゲームオーバー画面 -->
@@ -158,6 +168,18 @@
 		</div>
 		<p class="mono text-green-900 text-xs mt-2">↵ Enter でも送信</p>
 	</div>
+
+	<!-- APIステータス -->
+	{#if apiStatus !== 'ready'}
+	<div class="fade-in mono text-xs px-3 py-2 border rounded-sm"
+		style="background:#0a0a00; border-color:{apiStatus === 'error' ? '#7f1d1d' : '#3a2e00'}; color:{apiStatus === 'error' ? '#f87171' : '#ca8a04'};">
+		{#if apiStatus === 'warming'}
+		◌ 解析サーバー起動中… 初回のみ30秒ほどかかる場合があります
+		{:else}
+		✗ 解析サーバーへの接続に失敗しました
+		{/if}
+	</div>
+	{/if}
 
 	<!-- ステータスバー -->
 	<div class="flex justify-between mono text-green-900 text-xs px-1">
