@@ -53,5 +53,13 @@
 @keyframes blink { 50% { opacity: 0; } }
 .cursor::after { content: '▌'; animation: blink 1s step-end infinite; color: #4ade80; margin-left: 2px; }
 
+@keyframes loading-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.15; }
+}
+.loading-dot { display: inline-block; animation: loading-pulse 1.4s ease-in-out infinite; }
+.loading-dot:nth-child(2) { animation-delay: .25s; }
+.loading-dot:nth-child(3) { animation-delay: .5s; }
+
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .fade-in { animation: fadeIn .3s ease forwards; }

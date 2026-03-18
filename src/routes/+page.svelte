@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './page.css';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { initMoonBit, getStatus } from '$lib/bf.js';
 	import { GameState } from '$lib/game.svelte.js';
@@ -31,6 +32,26 @@
 	<title>Brainfuck しりとり</title>
 </svelte:head>
 
+{#if apiStatus === 'warming'}
+<div transition:fade={{ duration: 300 }}
+	class="fixed inset-0 flex items-center justify-center"
+	style="background:#050a05; z-index:90;">
+	<div class="flex flex-col items-center gap-5 px-8 text-center">
+		<p class="mono text-xs tracking-widest" style="color:#1a3a1a;">[ SYSTEM BOOT ]</p>
+		<h2 class="mono text-xl crt-glow" style="color:#4ade80;">解析サーバー起動中</h2>
+		<div class="mono text-3xl" style="color:#4ade80; letter-spacing:.3em;">
+			<span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span>
+		</div>
+		<p class="jp text-xs" style="color:#2a5a2a;">初回起動に30秒ほどかかる場合があります</p>
+		<button onclick={() => { apiStatus = 'ready'; }}
+			class="btn text-xs px-5 py-2 rounded-sm border mt-2"
+			style="border-color:#1a3a1a; color:#2d5a2d;">
+			[ スキップ ]
+		</button>
+	</div>
+</div>
+{/if}
+
 <div class="scanline min-h-screen text-green-100" style="background:#050a05;">
 <div class="max-w-xl mx-auto px-4 py-8 flex flex-col gap-6">
 
@@ -57,10 +78,8 @@
 			<div class="text-sm font-bold">[ オンライン対戦 ]</div>
 			<div class="jp text-pink-900 text-xs mt-1">別々の端末でリアルタイム対戦</div>
 		</button>
-		{#if apiStatus !== 'ready'}
-		<p class="mono text-xs text-center" style="color:{apiStatus === 'error' ? '#f87171' : '#6b6b00'};">
-			{apiStatus === 'warming' ? '◌ 解析API起動中...' : '✗ 解析APIへの接続に失敗'}
-		</p>
+		{#if apiStatus === 'error'}
+		<p class="mono text-xs text-center" style="color:#f87171;">✗ 解析APIへの接続に失敗しました</p>
 		{/if}
 	</div>
 	{:else if game.gameOver}
@@ -168,18 +187,6 @@
 		</div>
 		<p class="mono text-green-900 text-xs mt-2">↵ Enter でも送信</p>
 	</div>
-
-	<!-- APIステータス -->
-	{#if apiStatus !== 'ready'}
-	<div class="fade-in mono text-xs px-3 py-2 border rounded-sm"
-		style="background:#0a0a00; border-color:{apiStatus === 'error' ? '#7f1d1d' : '#3a2e00'}; color:{apiStatus === 'error' ? '#f87171' : '#ca8a04'};">
-		{#if apiStatus === 'warming'}
-		◌ 解析サーバー起動中… 初回のみ30秒ほどかかる場合があります
-		{:else}
-		✗ 解析サーバーへの接続に失敗しました
-		{/if}
-	</div>
-	{/if}
 
 	<!-- ステータスバー -->
 	<div class="flex justify-between mono text-green-900 text-xs px-1">
