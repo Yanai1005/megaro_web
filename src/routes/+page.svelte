@@ -166,6 +166,12 @@
 		<span>{game.expectedChar ? 'NEXT CHAR: [ENCRYPTED]' : 'FIRST MOVE'}</span>
 	</div>
 
+	<!-- メニューへ戻る -->
+	<button onclick={() => { game.reset(); mode = 'select'; }}
+		class="btn text-green-800 border border-green-950 text-xs px-3 py-1.5 rounded-sm hover:text-green-600 self-start">
+		← メニュー
+	</button>
+
 	{/if}
 
 </div>
