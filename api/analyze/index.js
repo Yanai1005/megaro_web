@@ -6,22 +6,18 @@ module.exports = async function (context, req) {
 		return;
 	}
 
-	const res = await fetch('https://jlp.yahooapis.jp/MAService/V2/parse', {
+	const res = await fetch(process.env.ANALYZE_API_URL, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'User-Agent': `Yahoo AppID: ${process.env.YAHOO_APP_ID}`,
-		},
+		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
-			id: '1',
-			jsonrpc: '2.0',
+			id: 1,
 			method: 'jlp.maservice.parse',
 			params: { q },
 		}),
 	});
 
 	if (!res.ok) {
-		context.res = { status: 502, body: `Yahoo API error: ${res.status}` };
+		context.res = { status: 502, body: `Analyze API error: ${res.status}` };
 		return;
 	}
 
