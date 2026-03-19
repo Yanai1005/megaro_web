@@ -71,6 +71,10 @@ export class GameState {
 			this.endGame(this.currentPlayer, `「${body}」はすでに使われた単語です`);
 			return;
 		}
+		const first = firstChar(reading);
+		if (this.expectedChar && first !== this.expectedChar) {
+			this.error = '最初の文字が違います'; return;
+		}
 		const last = lastChar(reading);
 		if (!isHiragana(last)) {
 			this.error = '読みを取得できませんでした。「東京(とうきょう)」のように括弧で読みを付けてください'; return;

@@ -87,7 +87,7 @@ module.exports = async function (context, req) {
     context.res = { status: 422, body: JSON.stringify({ error: '辞書に見つかりません。実在する単語か「単語(よみ)」の形で入力してください' }) }; return;
   }
   if (expectedChar && firstChar(reading) !== expectedChar) {
-    context.res = { status: 422, body: JSON.stringify({ error: `Brainfuck を解読すると… 「${expectedChar}」から始まる単語を入力してください` }) }; return;
+    context.res = { status: 422, body: JSON.stringify({ error: '最初の文字が違います' }) }; return;
   }
 
   const turn = { player: currentPlayer, word, reading };
